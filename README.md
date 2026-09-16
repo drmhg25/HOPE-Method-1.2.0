@@ -23,7 +23,7 @@ Puzzle 5: Build a codon → amino-acid dictionary
 
 Puzzle 6: Translate BCR sequences programmatically
 
-Puzzle 7: Compare nucleotide and protein sequences
+Puzzle 7: Validate sequence with 4 criterias
 
 Puzzle 8: Identify Fab/variable-region boundaries
 
