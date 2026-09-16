@@ -1,6 +1,7 @@
 HOPE method version 1.2.0
 
-Authors: ChatGPT, Gemini, and Michellie Hernandez
+Authors: Michellie Hernandez
+AI assisted development ChatGPT was used for curriculum drafting, coding assistance and editorial feedback. 
 
 Phase 1 — Build the biological data foundation
 Puzzles 1–10
