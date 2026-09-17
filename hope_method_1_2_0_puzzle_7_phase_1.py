@@ -80,6 +80,41 @@ bcr4 = "ATGGCCATTTAA GGTAA".replace(" ", "")
 '''
 """
 
+def classify_sequence(sequence):
+  aa_in_protein = {
+    "Alanine": "A",
+    "Arginine": "R",
+    "Asparagine": "N",
+    "Aspartic acid": "D",
+    "Cysteine": "C",
+    "Glutamic acid": "E",
+    "Glutamine": "Q",
+    "Glycine": "G",
+    "Histidine": "H",
+    "Isoleucine": "I",
+    "Leucine": "L",
+    "Lysine": "K",
+    "Methionine": "M",
+    "Phenylalanine": "F",
+    "Proline": "P",
+    "Serine": "S",
+    "Threonine": "T",
+    "Tryptophan": "W",
+    "Tyrosine": "Y",
+    "Valine": "V"
+}
+  if set(sequence).issubset({"A", "T", "G", "C"}):
+        return "Sequence is DNA"
+
+  elif set(sequence).issubset({"A", "U", "G", "C"}):
+        return "Sequence is RNA"
+  elif set(sequence).issubset(set(aa_in_protein.values())):
+        return "Sequence is a Protein"
+  else:
+        return "Sequence is Unknown"
+
+
+
 def transcribe_dna_to_rna(dna_sequence):
   return dna_sequence.replace("T", "U")
 
@@ -139,37 +174,44 @@ def central_dogma(dna_sequence):
 
 
 def validate_coding_sequence(sequence):
-  sequence = sequence.replace("T", "U")
-  rna_sequence = sequence.replace("T", "U")
+  sequence_type = classify_sequence(sequence)
+
+  if sequence_type == "Sequence is DNA":
+    rna_sequence = sequence.replace("T", "U")
+  elif sequence_type == "Sequence is RNA":
+    rna_sequence = sequence
+  else:
+    return sequence, "Invalid sequence"
+
   invalid = ""
   check_point = 0
-  codons = find_codons(sequence)
+  codons = find_codons(rna_sequence)
   stop_codons = ["UAA", "UAG", "UGA"]
-  if sequence.startswith("AUG") == False:
-    invalid = sequence, "Invalid: missing start codon"
+  
+  if rna_sequence.startswith("AUG") == False:
+    invalid += "Invalid: missing start codon"
   else:
     check_point +=1
 
-  if not len(sequence) % 3 == 0:
-    invalid = sequence, "Invalid: sequence length is not divisible by 3"
+  if not len(rna_sequence) % 3 == 0:
+    invalid += " Invalid: sequence length is not divisible by 3"
   else:
     check_point +=1
 
-  if codons[-1] in stop_codons == False:
-    invalid = sequence, "Invalid: missing terminal stop codon"
+  if codons[-1] not in stop_codons:
+    invalid += " Invalid: missing terminal stop codon"
   else:
       check_point +=1
 
-  for codon in codons:
-    if codon in codons[:-1]:
-      invalid = sequence, "Invalid: internal stop codon detected"
-    else:
-      check_point +=1
+  if any(codon in stop_codons for codon in codons[:-1]):
+      invalid += " Invalid: internal stop codon detected"
+  else:
+    check_point +=1
 
   if check_point == 4:
     return sequence, "Valid coding sequence. Passing all 4 checkpoints"
   else:
-    return sequence, " ",invalid
+    return sequence, invalid
 
 
 bcr1 = "ATGGCCATTGTATGGTAA"
@@ -179,7 +221,11 @@ bcr2 = "GGCCATTGTATGGTAA"
 bcr3 = "ATGGCCATTTGGTAA"
 
 bcr4 = "ATGGCCATTTAA GGTAA"
+
+bcr5 = "ATGGCCATTUGAUGGTAA"
+
 print("BCR1: ", validate_coding_sequence(bcr1))
 print("BCR2: ", validate_coding_sequence(bcr2))
 print("BCR3: ", validate_coding_sequence(bcr3))
 print("BCR4: ", validate_coding_sequence(bcr4))
+print("BCR5: ", validate_coding_sequence(bcr5))
